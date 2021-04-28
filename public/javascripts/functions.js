@@ -1,7 +1,7 @@
 const mainContainer=document.querySelector(`#mainContainer`)
 
 function  homeFunction(){
-  
+
     fetch("/",{
         method:"POST",
         headers:{
@@ -14,16 +14,44 @@ function  homeFunction(){
            alert(error);
            return
        }
-
-       displayHomeInfo(userInfo.username)
+       let {id,username,image}=userInfo;
+       homeUserName=username;
+       localStorage.setItem("homeUserName",username);
+       homeUserId=id;
+       localStorage.setItem("homeUserId",id)
+       homeUserImage=image;
+       localStorage.setItem("homeUserImage",image)
+       displayHomeInfo(id,username,image);
+       newUser()
 
     })
 }
 
-function displayHomeInfo(username){
+function displayHomeInfo(id,username,image){
     mainContainer.innerHTML="",
     mainContainer.insertAdjacentHTML(`afterbegin`,`
-         <h1>${username}</h1>
+    <div class="container-fluid bg-secondary p-5 text-center">
+        <h1>${username}</h1>
+        <img src="/images/${image}">
+        <p>
+            <a href="/profile/${id}" >Profile</a>
+        </p>
+    </div>
+    <div class="container-fluid p-5 text-center " style="background-color:lightblue">
+   <div class="row">
+        <div class="col-md-2">
+            <h5>Non Friends</h5>
+        </div>
+        <div class="col-md-8">
+            <h1>Posts</h1>
+        </div>
+        <div class="col-md-2 bg-primary">
+            <h5>Onlines</h5>
+            <section id="onlinesSection">
+            </section>
+        </div>
+    </div> 
+</div>
     `)
 }
 

@@ -10,6 +10,10 @@ let UserSchama=new Schema({
     },
     password:{
         type:String,
+    },
+    image:{
+        type:String,
+        default:"default.png"
     }
 })
 

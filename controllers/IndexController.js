@@ -1,11 +1,18 @@
+const { UserModel } = require("../models/UserModel");
 
 class IndexController{
     indexView(req,res){
         res.render('index');
     }
-    homeInfo(req,res){
-        console.log(7, req.user)
-        res.json({userInfo:req.user})
+    async homeInfo(req,res){
+        let user=await UserModel.findOne({_id:req.user.id}).select("image username");
+        let userInfo={
+            id:req.user.id,
+            username:user.username,
+            image:user.image
+        }
+        
+        res.json({userInfo})
     }
 }
 
