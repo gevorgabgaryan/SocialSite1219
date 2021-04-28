@@ -12,10 +12,12 @@ function newUser(){
 }
 
 
+
 socket.on(`new online user`,data=>{
     let {username,id}=data;
     addonlineUser(username,id)
 })
+
 
 socket.on(`online users`,data=>{
     console.log("online users",data);
@@ -26,14 +28,19 @@ socket.on(`online users`,data=>{
     })
 })
 
+socket.on(`user disconnect`,(data)=>{
+     let onlinesSection=document.querySelector(`#onlinesSection`);
+    onlinesSection.querySelector(`#o${data}`).remove()
+
+})
 
 function addonlineUser(username,id){
     let onlinesSection=document.querySelector(`#onlinesSection`);
     //checking if is online already user
-    if(onlinesSection.querySelector(`#o${id}`)){
+    if(onlinesSection.querySelector(`#o${id}`) || id==homeUserId){
         return
     }
     onlinesSection.insertAdjacentHTML(`afterbegin`,`
-      <h1 id="o${id}">${username}</h1>
+      <h1 id="o${id}"><img src="/images/circle.gif" width="8" height="8">${username}</h1>
     `)
 }

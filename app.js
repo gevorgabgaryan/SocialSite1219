@@ -67,15 +67,25 @@ io.on("connection",socket=>{
     socket.join(id);
     let onlineSet=new Set()
     for(let [, socket] of io.of("/").sockets){
-        if(id==socket.user.id) continue;
+        if(`${id}`==`${socket.user.id}`) continue;
         onlineSet.add(JSON.stringify(socket.user))
     } 
+  
     //others
     socket.broadcast.emit("new online user",socket.user);
     //me
     io.to(id).emit("online users",[...onlineSet]);
 
-      
+    //user disconect
+    socket.on("disconnect",async ()=>{
+       let {size}=await io.of("/").in(socket.user.id).allSockets();
+        console.log(81,size)
+       if(!size){
+         socket.broadcast.emit("user disconnect", socket.user.id);
+       }
+       
+
+    })  
 
 })
 

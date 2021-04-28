@@ -31,6 +31,9 @@ function displayHomeInfo(id,username,image){
     mainContainer.innerHTML="",
     mainContainer.insertAdjacentHTML(`afterbegin`,`
     <div class="container-fluid bg-secondary p-5 text-center">
+    <p>
+    <button class="btn  btn-primary float-right" id="logOut">LogOut</button>
+    </p>
         <h1>${username}</h1>
         <img src="/images/${image}">
         <p>
@@ -53,6 +56,13 @@ function displayHomeInfo(id,username,image){
     </div> 
 </div>
     `)
+
+    //log out
+    let logOut=document.querySelector("#logOut");
+    logOut.addEventListener("click", ()=>{
+        localStorage.removeItem(`authToken`);
+        location.href="/"
+    })
 }
 
 function loginFunction(){
@@ -105,7 +115,7 @@ function loginFunction(){
             }
 
             if(token){
-                alert(token)
+        
                 localStorage.setItem(`authToken`,token);
                 username=user.username
                 localStorage.setItem(`username`,user.username);
