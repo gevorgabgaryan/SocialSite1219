@@ -1,4 +1,15 @@
-const mainContainer=document.querySelector(`#mainContainer`)
+const mainContainer=document.querySelector(`#mainContainer`);
+
+function displayOnePost(data){
+         let postContainer=document.getElementsByClassName(`postContainer`)[0];
+        postContainer.insertAdjacentHTML(`afterbegin`,`
+        <div>
+             <p class="display-4">${data.content}</p>
+             <p><b>${data.username}</b>  <span>${data.time}</span></p>
+         </div>    
+        `)
+    }
+  
 
 function  homeFunction(){
 
@@ -9,8 +20,13 @@ function  homeFunction(){
         }
     }).then(res=>res.json())
     .then(data=>{
-        let {error,userInfo}=data;
+        let {error,userInfo, posts}=data;
        if(error){
+           if(error="jwt expired"){
+               localStorage.removeItem(`authToken`);
+               location.href="/"
+               return
+           }
            alert(error);
            return
        }
@@ -21,13 +37,14 @@ function  homeFunction(){
        localStorage.setItem("homeUserId",id)
        homeUserImage=image;
        localStorage.setItem("homeUserImage",image)
-       displayHomeInfo(id,username,image);
+       displayHomeInfo(id,username,image, posts);
+    
        newUser()
 
     })
 }
 
-function displayHomeInfo(id,username,image){
+function displayHomeInfo(id,username,image, posts){
     mainContainer.innerHTML="",
     mainContainer.insertAdjacentHTML(`afterbegin`,`
     <div class="container-fluid bg-secondary p-5 text-center">
@@ -41,22 +58,59 @@ function displayHomeInfo(id,username,image){
         </p>
     </div>
     <div class="container-fluid p-5 text-center " style="background-color:lightblue">
-   <div class="row">
-        <div class="col-md-2">
-            <h5>Non Friends</h5>
-        </div>
-        <div class="col-md-8">
-            <h1>Posts</h1>
-        </div>
-        <div class="col-md-2 bg-primary">
-            <h5>Onlines</h5>
-            <section id="onlinesSection">
-            </section>
-        </div>
-    </div> 
-</div>
+    <div class="row">
+         <div class="col-md-2">
+             <h5>Non Friends</h5>
+         </div>
+         <div class="col-md-8 p-5 bg-primary text-white">
+             <h1>Posts</h1>
+      <p>
+        <textarea name="content" id="" class="form-control postContent" rows="5" ></textarea>
+        <button class="btn btn-success addPostBtn">Add New Post</button> 
+        <section class="postContainer"></section> 
+       </p>
+         </div>
+         <div class="col-md-2 bg-primary">
+             <h5>Onlines</h5>
+             <section id="onlinesSection">
+             </section>
+         </div>
+     </div> 
+ </div>
     `)
+    posts.forEach(post=>{
+        let data={
+            content:post.content,
+            username:post.author.username,
+            time:post.createdAt
+        }
+       console.log(data)
+     displayOnePost(data)
 
+    })
+
+
+    let addPostBtn=document.getElementsByClassName(`addPostBtn`)[0];
+    let postContent=document.getElementsByClassName(`postContent`)[0];
+  
+
+    addPostBtn.addEventListener(`click`,()=>{
+        let content=postContent.value;
+        let postInfo={
+            content:content,
+            id: homeUserId,
+            username:homeUserName
+        }
+
+        socket.emit(`new post`,postInfo)
+    })
+
+    socket.on(`new post`,data=>{
+        displayOnePost(data)
+        
+    })
+
+    
     //log out
     let logOut=document.querySelector("#logOut");
     logOut.addEventListener("click", ()=>{

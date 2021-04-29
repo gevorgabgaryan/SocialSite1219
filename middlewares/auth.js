@@ -9,7 +9,7 @@ const verifyToken=(req,res, next)=>{
    
         jwt.verify(token,process.env.jwtSecret,(err,decoded)=>{
             if(err){
-                res.json({error:err.message})
+              return  res.json({error:err.message})
             }
             req.user=decoded;
             next()

@@ -1,6 +1,7 @@
 const { UserModel } = require("../models/UserModel");
 let fs=require(`fs`);
 let path=require(`path`);
+const { PostModel } = require("../models/PostModel");
 
 class IndexController{
     indexView(req,res){
@@ -8,13 +9,15 @@ class IndexController{
     }
     async homeInfo(req,res){
         let user=await UserModel.findOne({_id:req.user.id}).select("image username");
+        let posts=await PostModel.find().populate(`author`);
+        
         let userInfo={
             id:req.user.id,
             username:user.username,
             image:user.image
         }
         
-        res.json({userInfo})
+        res.json({userInfo, posts})
     }
 
    async profileView(req,res){
@@ -48,7 +51,7 @@ class IndexController{
            console.log(err);
            res.json({error:err.message})
        }
-    }
+    }  
 }
 
 module.exports=new IndexController()

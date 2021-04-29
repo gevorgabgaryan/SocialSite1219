@@ -27,4 +27,5 @@ router.get("/profile/:id", profileView)
 
 router.post("/changePhoto",verifyToken, upload,imageResizer, changePhoto) ;
 
+
 module.exports = router;

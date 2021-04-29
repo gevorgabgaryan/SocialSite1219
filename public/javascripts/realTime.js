@@ -1,5 +1,5 @@
 let url="http://localhost:3000/"
-const socket=io(url,{
+var socket=io(url,{
     autoConnect:false,
 })
 
@@ -44,3 +44,4 @@ function addonlineUser(username,id){
       <h1 id="o${id}"><img src="/images/circle.gif" width="8" height="8">${username}</h1>
     `)
 }
+

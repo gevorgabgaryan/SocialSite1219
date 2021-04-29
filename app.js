@@ -10,6 +10,7 @@ const jwt=require(`jsonwebtoken`);
 
 const indexRouter = require('./routes/IndexRouter');
 const authRouter = require('./routes/AuthRouter');
+const { PostModel } = require('./models/PostModel');
 
 
 //mongo connetc
@@ -19,7 +20,7 @@ mongoose.connect(process.env.mongoDbLink,{
  
 },(err)=>{
    if(err) throw err;
-   console.log(`connected`)
+ 
 })
 
 
@@ -57,7 +58,7 @@ io.use((socket,next)=>{
    }
    
  }catch(err){
-   console.log(51,err)
+
    next(err)
  }
 })
@@ -76,10 +77,25 @@ io.on("connection",socket=>{
     //me
     io.to(id).emit("online users",[...onlineSet]);
 
+    //add post
+   socket.on(`new post`,async data=>{
+     let newPost=await PostModel.create({
+        content:data.content,
+        author:data.id
+      })
+     
+      let postInfo={
+        ...data,
+        time: newPost.createdAt
+      }
+      console.log(postInfo)
+      io.emit(`new post`,postInfo)
+   })
+
     //user disconect
     socket.on("disconnect",async ()=>{
        let {size}=await io.of("/").in(socket.user.id).allSockets();
-        console.log(81,size)
+   
        if(!size){
          socket.broadcast.emit("user disconnect", socket.user.id);
        }
