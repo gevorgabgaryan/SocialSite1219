@@ -1,7 +1,8 @@
 const express = require('express');
 const { verify } = require('jsonwebtoken');
-const { indexView, homeInfo } = require('../controllers/IndexController');
+const { indexView, homeInfo, profileView, changePhoto } = require('../controllers/IndexController');
 const { verifyToken } = require('../middlewares/auth');
+const { upload, imageResizer } = require('../middlewares/upload');
 const router = express.Router();
 
 /* GET home page. */
@@ -14,6 +15,16 @@ router.get('/favicon.ico', function(req, res, next) {
 });
 
 
-router.post("/",verifyToken,homeInfo ) 
+router.post("/",verifyToken,homeInfo ) ;
+
+/**
+ * displaying profile page using ID*/
+
+router.get("/profile/:id", profileView) 
+
+
+//change Photo
+
+router.post("/changePhoto",verifyToken, upload,imageResizer, changePhoto) ;
 
 module.exports = router;
